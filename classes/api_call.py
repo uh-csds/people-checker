@@ -1,12 +1,10 @@
 # api_call.py
 import requests
-import param
-
 
 class APICall:
     """Establishes a basic API. Can be used as a base."""
-    def __init__(self, api_path, **kwargs):
-        self._api_path = api_path
+    def __init__(self, pc_api_path, **kwargs):
+        self._api_path = pc_api_path
         self._params = kwargs
 
     def add_parameters(self, **kwargs):
@@ -43,7 +41,10 @@ class APICall:
 
     def get_param(self, key):
         """Gets a specific parameter from the params."""
-        return self._params.get(key, "")
+        try:
+            return self._params.get(key, "")
+        except Exception as e:
+            print(f"Error when getting parameter! Reason: {str(e)}.")
 
     def get_params(self):
         """Provides a list of the parameters."""
