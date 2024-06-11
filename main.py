@@ -1,19 +1,16 @@
-# This is a sample Python script.
-from classes.helsinki_api_call import HelsinkiAPICall
-import json
+from helsinki_api_call import HelsinkiAPICall as hapi
 
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    helsinki_api = HelsinkiAPICall(sort="id")
-    helsinki_api.gather_sort_range()
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    # First, finding all people_ids from the social data science page
+    desired_search_page = "https://www.helsinki.fi/en/networks/centre-social-data-science/people"
+    people_ids = hapi.scrape_helsinki_people_ids(desired_search_page)
+
+    # Next - assuming you don't immediately know the research id - finding it through the name of an individual.
+    person_api = hapi(fullname="Maria Valaste")
+    member = hapi.get_all_members(person_api.request_json())[0]
+    hapi.get_member_info(member, search_term="id")
+    #print(member["id"])
+
+
+
+

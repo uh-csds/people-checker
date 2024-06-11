@@ -1,13 +1,13 @@
 # general_api.py
 # Functions (currently only decorators) useful for designing API classes.
 
-def check_correct_api(link):
-    """Makes sure that an API's link is correct on input, else returns an error.
+def check_correct_link(link):
+    """Makes sure that a link is correct on input, else returns an error.
     :param link: Desired API link to check."""
     def decorator(func):
         def wrapper(base_api, *args, **kwargs):
             if base_api.get_url() != link:
-                return f"Error: Invalid base url. For this function, your url should be {link}."
+                raise ValueError(f"Invalid url. For this function, your url should be {link}.")
             return func(base_api, *args, **kwargs)
 
         return wrapper

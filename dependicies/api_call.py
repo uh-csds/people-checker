@@ -31,7 +31,7 @@ class APICall:
             except Exception as e:
                 print("remove_parameters failed on key ", key, "! The error was: ", str(e))
 
-    def create_api(self, **kwargs):
+    def create_child_api(self, **kwargs):
         """Creates a new API using self as a base.
         :param kwargs: parameters to add to the API call."""
         new_api = APICall(self._api_path, **self._params)
