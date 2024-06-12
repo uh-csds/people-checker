@@ -112,6 +112,8 @@ base_api.request_json() # Gets the json result from the API call.
 
 ## Appendix
 
+### Helsinki People Finder API Parameters
+
 For calling the Helsinki People Finder API, you can use the following commands:
 
 ```
@@ -145,6 +147,8 @@ description, publicWorkDescription, currentStatus: Do have values under a person
 
 limit: No clear use as of now.
 ```
+
+### Member Dictionary Parameters
 
 Additionally, when dealing with a member dictionary, you can use `.get_member_info(serach_term="")` with the following terms:
 
