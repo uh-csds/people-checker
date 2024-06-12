@@ -29,9 +29,47 @@ class HelsinkiAPICall(APICall):
         self.current_member = {}
 
     @staticmethod
-    def get_member_info(member, search_term=""):
-        for item in member:
-            print(item)
+    def get_member_info(member, search_term="", all_instances=False):
+        """Given a member dict, find information about that member. Can return either a dictionary
+        (for an organization) or a value (for id).
+        :param member: The member dictionary.
+        :param all_instances: If True, returns all names and id instances. Set at start to False.
+        :param search_term: What term you wish to search for. For dictionaries, this can be:
+        researchOrganizations: (i.e., if a person is a member of the Centre for Social Data
+        Science or part of the Faculty of Social Sciences. If all_instances is False, returns the
+        lowest denomination (since Centre is a child of Faculty,  Centre returns instead of Faculty.));
+        steeringGroups: ();
+        hrOrganizations: ();
+        title: (i.e., Professor);
+        fieldsOfScience: (i.e. Statistics and probability);
+        address: (i.e. work address).
+
+        Other terms that will return a value are:
+        firstnames, lastnames, fullname, email, mobilenumber, fullnumber, id.
+
+        Others that I am not certain on, but may give a result, depending on the person:
+        description, publicWorkDescription, picture, currentStatus, twiterLink, linkedinLink,
+        facebookLink, instagramLink, youtubeLink, personalLinks
+        """
+        def recursive_dict_in_list(nested_list):
+            dict_elements = []
+            for element in nested_list:
+                if isinstance(element, dict):
+                    if all_instances:
+                        dict_elements.append({"id": element.get("id"), "name": element.get("name").get("en")})
+                    else:
+                        return {"id": element.get("id"), "name": element.get("name").get("en")}
+                elif isinstance(element, list):
+                    return recursive_dict_in_list(element)
+            return dict_elements
+
+        desired_search = member.get(search_term)
+        # If the desired search is not a dict or list, that means the function was a success.
+        if not isinstance(desired_search, (dict, list)):
+            return desired_search
+        else:
+            return recursive_dict_in_list(desired_search)
+
 
     @staticmethod
     def scrape_helsinki_people_ids(url):
@@ -63,7 +101,10 @@ class HelsinkiAPICall(APICall):
     @staticmethod
     def compare_members_to_list(search_term, members_list, comparison_list):
         """Given a search term, a members list, and a comparison list that contains a members element (i.e. id),
-        find all instances that match and don't match."""
+        find all instances that match and don't match.
+        :param search_term: The search term to compare - i.e. id.
+        :param members_list: A list of member dictionaries.
+        :param comparison_list: A list of ids to compare the members to."""
         matching_terms, different_terms = ([], [])
         for member in members_list:
             if str(member[search_term]) in comparison_list:
@@ -139,7 +180,6 @@ class HelsinkiAPICall(APICall):
                     for member in hydra_member:
                         if int(member.get(arg)) == search_id:
                             print(f"Took {count} total calls.")
-                            #print(member)
                             return member
                 # Else, check if the search_id is either below or above the id range in the gathered data.
                 elif search_id < start_id:
