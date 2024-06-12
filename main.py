@@ -1,4 +1,5 @@
 from helsinki_api_call import HelsinkiAPICall as hapi
+from datetime import datetime
 
 if __name__ == '__main__':
     # Getting Research Organization ID
@@ -25,10 +26,17 @@ if __name__ == '__main__':
     members = []
     for person_id in different_terms:
         id_person_api = hapi(person_id = person_id)
-        members.append(id_person_api.binary_int_search())
+        members.append(id_person_api.binary_int_search()["fullname"])
 
-    for member in members:
-        print(member)
+    if members:
+        # Email Message
+        message = f"""\
+        Subject: {datetime.today().strftime("%Y-%m")} Update on Social Data Science Centre Members
+    
+        Hello!\n
+        The following people are considered to be members of CSDS, but are not currently on its people page:
+        {", ".join(str(x) for x in members)}"""
+        print(message)
 
 
 

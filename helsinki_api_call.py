@@ -34,22 +34,7 @@ class HelsinkiAPICall(APICall):
         (for an organization) or a value (for id).
         :param member: The member dictionary.
         :param all_instances: If True, returns all names and id instances. Set at start to False.
-        :param search_term: What term you wish to search for. For dictionaries, this can be:
-        researchOrganizations: (i.e., if a person is a member of the Centre for Social Data
-        Science or part of the Faculty of Social Sciences. If all_instances is False, returns the
-        lowest denomination (since Centre is a child of Faculty,  Centre returns instead of Faculty.));
-        steeringGroups: ();
-        hrOrganizations: ();
-        title: (i.e., Professor);
-        fieldsOfScience: (i.e. Statistics and probability);
-        address: (i.e. work address).
-
-        Other terms that will return a value are:
-        firstnames, lastnames, fullname, email, mobilenumber, fullnumber, id.
-
-        Others that I am not certain on, but may give a result, depending on the person:
-        description, publicWorkDescription, picture, currentStatus, twiterLink, linkedinLink,
-        facebookLink, instagramLink, youtubeLink, personalLinks
+        :param search_term: What term you wish to search for.
         """
         def recursive_dict_in_list(nested_list):
             dict_elements = []
@@ -163,10 +148,10 @@ class HelsinkiAPICall(APICall):
             # Continuing the count
             nonlocal count
             count += 1
-            print(f"Run number {count}")
-            print(f"Low value: {low}")
-            print(f"High value: {high}")
-            print(f"Search id: {search_id}")
+            # print(f"Run number {count}")
+            # print(f"Low value: {low}")
+            # print(f"High value: {high}")
+            # print(f"Search id: {search_id}")
             # Setting mid value, getting data & beginning and end id
             mid = (low + high) // 2
             data = self.request_json(sort=arg, page=mid)
@@ -179,7 +164,7 @@ class HelsinkiAPICall(APICall):
                 if start_id < search_id < end_id:
                     for member in hydra_member:
                         if int(member.get(arg)) == search_id:
-                            print(f"Took {count} total calls.")
+                            print(f"Took {count} total calls to finish binary search for {search_id}.")
                             return member
                 # Else, check if the search_id is either below or above the id range in the gathered data.
                 elif search_id < start_id:
