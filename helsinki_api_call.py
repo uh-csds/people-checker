@@ -1,11 +1,31 @@
 #helsinki_api_call.py
-import requests
-from bs4 import BeautifulSoup
+# File dependencies
 from dependicies.api_call import APICall
 from dependicies.api_decorators import check_correct_argument
+
+# External dependencies
+import requests
+from bs4 import BeautifulSoup
 import re
+from subprocess import Popen, PIPE
+from email.mime.text import MIMEText
 
 _API_PATH = 'https://www.helsinki.fi/en/api/people/contacts'
+
+
+def plaintext_sendmail(recipient, subject, message, sender="me@example.com", sendmail_loc="/usr/lib/sendmail"):
+    """Sends a plaintext email through sendmail to a recipient.
+    :param recipient: The email address you're sending to.
+    :param subject: The subject line of the email.
+    :param message: The body of the email you are sending.
+    :param sender: The sender's email - may not be necessary depending on system.
+    :param sendmail_loc: The location of sendmail.exe on the users or systems server."""
+    msg = MIMEText(message)
+    msg["From"] = sender
+    msg["To"] = recipient
+    msg["Subject"] = subject
+    p = Popen([sendmail_loc, "-t", "-oi"], stdin=PIPE, universal_newlines=True)
+    p.communicate(msg.as_string())
 
 
 def extract_page_number(page_info):
@@ -60,8 +80,12 @@ class HelsinkiAPICall(APICall):
     def scrape_helsinki_people_ids(url):
         """Given a Helsinki webpage, scrape all person ids from the html.
         :param url: The desired url link."""
+        headers = {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+        }
         # Fetch the HTML content of the webpage
-        response = requests.get(url)
+        response = requests.get(url, headers=headers)
 
         # Set up person ids
         person_ids = []
