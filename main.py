@@ -47,4 +47,4 @@ if __name__ == '__main__':
 
         print(message)
         # Sends email (sender, sendmail_loc not necessary if given strings are applicable, but kept in for clarity)
-        plaintext_sendmail(recipient=recipient, subject=subject, message=message, sender="me@example.com", sendmail_loc="/usr/lib/sendmail")
+        plaintext_sendmail(recipient=recipient, subject=subject, message=message, sender="no-reply@helsinki.fi", sendmail_loc="/usr/lib/sendmail")
