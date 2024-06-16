@@ -32,7 +32,7 @@ if __name__ == '__main__':
     if members:
         # Email Message
         recipient = "helsinkisocialdatascience@gmail.com"  # CHANGE
-        subject = f"{datetime.today().strftime("%Y-%m")} Update on Social Data Science Centre Members"  # Will datetime work?
+        subject = f"{datetime.today().strftime('%Y-%m')} Update on Social Data Science Centre Members"  # Will datetime work?
         message = f"""
         Hello!
         
