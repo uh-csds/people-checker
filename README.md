@@ -39,6 +39,8 @@ options:
                         /usr/lib/sendmail.
 ```
 
+The defaults are designed for the Centre for Social Data Science. The only official requirement is email_recipient, but if you aim to use this for another website, you would likely need to change the email text and other parameters.
+
 ## Example Functions
 
 ### Matching a Helsinki Webpage's Members to a Research Groups
