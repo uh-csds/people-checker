@@ -151,7 +151,8 @@ class HelsinkiAPICall(APICall):
     @check_correct_argument("search", "_params", partial=True)
     def find_specific_id(self, search_term=""):
         """Given a search argument with an org name, find the org id. Only searches the first page.
-        researchOrganizations, title, and fieldsOfScience will work with search_term."""
+        researchOrganizations, title, and fieldsOfScience will work with search_term.
+        :param search_term: What fixed term you wish to search for (i.e. researchOrganizations)."""
         data = self.request_json()
         if data:
             hydra_member = data.get('hydra:member', {})
