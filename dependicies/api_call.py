@@ -31,16 +31,7 @@ class APICall:
             if kwargs:
                 data = requests.get(self._api_path, headers=self._headers, params=kwargs).json()
             else:
-                #decoded_url = urllib.parse.urlencode(self._api_path).replace('%7B', '{')
-                qry = urllib.parse.urlencode(self._params)
-                s = requests.Session()
-                s.headers = self._headers
-                req = requests.Request(method='GET', url=self._api_path)
-                prep = req.prepare()
-                prep.url = self._api_path + qry
-                r = s.send(prep)
-                return r
-                # data = requests.get(qry, headers=self._headers, params=self._params).json()
+                data = requests.get(self._api_path, headers=self._headers, params=self._params).json()
         except Exception as e:
             print(f"Error when requesting from the API! Reason: {str(e)}.")
         else:
