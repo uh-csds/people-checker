@@ -1,35 +1,19 @@
 # api_call.py
 import requests
+import urllib.parse
 
 
 class APICall:
     """Establishes a basic API. Can be used as a base."""
 
-    def __init__(self, ac_api_path, **kwargs):
+    def __init__(self, ac_api_path, ac_headers=None, **kwargs):
         """Establishes base api path and parameters for the api call.
         :param ac_api_path: Base API path. ac stands for APICall to differentiate from possible keywords.
+        :param ac_headers: Potential headers to use for the call. Expects a dict format.
         :param kwargs: Parameters to add to the API."""
+        self._headers = ac_headers
         self._api_path = ac_api_path
         self._params = kwargs
-
-    def add_parameters(self, **kwargs):
-        """Will add desired parameters to the API. If a parameter is already in the dictionary,
-        it's value will be replaced. Only accepts keyword arguments.
-        :param kwargs: All parameters to either set or replace."""
-        if not self._params:  # If no params was set
-            self._params = kwargs
-        else:  # Otherwise, if params exists
-            for key, value in kwargs.items():
-                self._params[key] = value
-
-    def remove_parameters(self, *args):
-        """Will remove the desired parameters from the API. Will only accept the parameter keys.
-        :param args: All argument keys to remove."""
-        for key in args:
-            try:
-                del self._params[key]
-            except Exception as e:
-                print("remove_parameters failed on key ", key, "! The error was: ", str(e))
 
     def create_child_api(self, **kwargs):
         """Creates a new API using self as a base.
@@ -45,25 +29,78 @@ class APICall:
         call that their API will not currently allow."""
         try:
             if kwargs:
-                data = requests.get(self._api_path, params=kwargs).json()
+                data = requests.get(self._api_path, headers=self._headers, params=kwargs).json()
             else:
-                data = requests.get(self._api_path, params=self._params).json()
+                data = requests.get(self._api_path, headers=self._headers, params=self._params).json()
         except Exception as e:
             print(f"Error when requesting from the API! Reason: {str(e)}.")
         else:
             return data
 
+    def _update_dict(self, target_dict, **kwargs):
+        """Helper function to update a dictionary with given keyword arguments."""
+        if not target_dict:
+            target_dict = kwargs
+        else:
+            target_dict.update(kwargs)
+
+    def _get_value(self, source_dict, key, default=""):
+        """Helper function to get a value from a dictionary with error handling."""
+        try:
+            return source_dict.get(key, default)
+        except Exception as e:
+            print(f"Error when getting value! Reason: {str(e)}.")
+            return default
+
+    def _remove_keys(self, target_dict, *keys):
+        """Helper function to remove keys from a dictionary with error handling."""
+        for key in keys:
+            try:
+                del target_dict[key]
+            except KeyError:
+                print(f"Key '{key}' not found in the dictionary.")
+            except Exception as e:
+                print(f"Failed to remove key '{key}'. The error was: {str(e)}")
+
+    def add_parameters(self, **kwargs):
+        """Will add desired parameters to the API. If a parameter is already in the dictionary,
+        it's value will be replaced. Only accepts keyword arguments.
+        :param kwargs: All parameters to either set or replace."""
+        self._update_dict(self._params, **kwargs)
+
+    def add_headers(self, **kwargs):
+        """Will add desired headers to the API. If a header is already in the dictionary,
+        it's value will be replaced. Only accepts keyword arguments.
+        :param kwargs: All headers to either set or replace."""
+        self._update_dict(self._headers, **kwargs)
+
+    def remove_parameters(self, *args):
+        """Will remove the desired parameters from the API. Will only accept the parameter keys.
+        :param args: All argument keys to remove."""
+        self._remove_keys(self._params, *args)
+
+    def remove_headers(self, *args):
+        """Will remove the desired headers from the API. Will only accept the header keys.
+        :param args: All argument keys to remove."""
+        self._remove_keys(self._headers, *args)
+
     def get_param(self, key):
         """Gets a specific parameter from the params.
         :param key: The key of the desired parameter."""
-        try:
-            return self._params.get(key, "")
-        except Exception as e:
-            print(f"Error when getting parameter! Reason: {str(e)}.")
+        return self._get_value(self._params, key)
 
     def get_params(self):
         """Provides a list of the parameters."""
         return self._params
+
+    def get_header(self, key):
+        """Gets a specific header from the params.
+        :param key: The key of the desired header."""
+        return self._get_value(self._headers, key)
+
+    def get_headers(self):
+        """Provides a list of the parameters."""
+        return self._headers
 
     def get_url(self):
         """Gets the base url."""
